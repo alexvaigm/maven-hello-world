@@ -87,6 +87,8 @@ jobs:
   docker:
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ needs.build.outputs.new_version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -150,7 +152,7 @@ jobs:
           cd helm-chart
           helm upgrade --install maven-hello-world . \
             --set image.repository=${{ env.DOCKER_USERNAME }}/maven-hello-world \
-            --set image.tag=${{ needs.build.outputs.new_version }} \
+            --set image.tag=${{ needs.docker.outputs.new_version }} \
             --create-namespace \
             --namespace maven-hello-world
 
@@ -173,4 +175,4 @@ jobs:
           echo "- Build: Completed" >> $GITHUB_STEP_SUMMARY
           echo "- Docker: Image built and pushed" >> $GITHUB_STEP_SUMMARY
           echo "- Deploy: Helm deployment and verification complete" >> $GITHUB_STEP_SUMMARY
-          echo "- Image tag: ${{ needs.build.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Image tag: ${{ needs.docker.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
