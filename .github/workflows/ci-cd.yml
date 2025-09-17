@@ -147,7 +147,11 @@ jobs:
         kubectl -n maven-hello-world describe pod -l app.kubernetes.io/name=maven-hello-world
         kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world || true
         kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world -p || true
-        
+        sleep 20
+        kubectl -n maven-hello-world describe pod -l app.kubernetes.io/name=maven-hello-world
+        kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world || true
+        kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world -p || true
+        kubectl -n maven-hello-world describe deployment -l app.kubernetes.io/name=maven-hello-world || true       
         # Wait for pod to be ready
         kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=maven-hello-world -n maven-hello-world --timeout=300s
         
