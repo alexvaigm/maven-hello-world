@@ -1,7 +1,7 @@
 # Multi-stage Docker build for Maven Hello World application
 
 # Stage 1: Build stage
-FROM maven:3.8.6-openjdk-17-slim AS builder
+FROM maven:3.9.4-eclipse-temurin-17-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -19,10 +19,12 @@ COPY myapp/src ./src
 RUN mvn clean package -DskipTests -B
 
 # Stage 2: Runtime stage
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-alpine
+RUN apk add --no-cache procps
 
 # Create a non-root user
-RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser
+# RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser
+RUN addgroup -S appuser && adduser -S appuser -G appuser
 
 # Set working directory
 WORKDIR /app
