@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: your-dockerhub-username/maven-hello-world
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 
 imagePullSecrets: []
@@ -55,17 +55,7 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 80
 
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 # Application specific configuration
 app:
