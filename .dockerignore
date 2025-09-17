@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# GitHub Actions
+.github
+
+# Helm
+helm-chart/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Documentation
+README.md
+readme.md
+
+# CI/CD
+Dockerfile
+.dockerignore

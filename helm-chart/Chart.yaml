@@ -1,0 +1,17 @@
+apiVersion: v2
+name: maven-hello-world
+description: A Helm chart for Maven Hello World Java application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+home: https://github.com/your-username/maven-hello-world
+sources:
+  - https://github.com/your-username/maven-hello-world
+maintainers:
+  - name: Alex Vainshtein
+    email: alex@vainshtein.com
+keywords:
+  - java
+  - maven
+  - hello-world
+  - spring-boot

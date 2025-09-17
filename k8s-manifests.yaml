@@ -1,0 +1,109 @@
+---
+# Source: maven-hello-world/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: maven-hello-world
+  labels:
+    helm.sh/chart: maven-hello-world-0.1.0
+    app.kubernetes.io/name: maven-hello-world
+    app.kubernetes.io/instance: maven-hello-world
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: maven-hello-world/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: maven-hello-world
+  labels:
+    helm.sh/chart: maven-hello-world-0.1.0
+    app.kubernetes.io/name: maven-hello-world
+    app.kubernetes.io/instance: maven-hello-world
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: maven-hello-world
+    app.kubernetes.io/instance: maven-hello-world
+---
+# Source: maven-hello-world/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maven-hello-world
+  labels:
+    helm.sh/chart: maven-hello-world-0.1.0
+    app.kubernetes.io/name: maven-hello-world
+    app.kubernetes.io/instance: maven-hello-world
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: maven-hello-world
+      app.kubernetes.io/instance: maven-hello-world
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: maven-hello-world
+        app.kubernetes.io/instance: maven-hello-world
+    spec:
+      serviceAccountName: maven-hello-world
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: maven-hello-world
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+          image: "your-dockerhub-username/maven-hello-world:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: JAVA_OPTS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "ps aux | grep java | grep -v grep"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "ps aux | grep java | grep -v grep"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
