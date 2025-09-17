@@ -37,11 +37,6 @@ RUN chown -R appuser:appuser /app
 # Switch to non-root user
 USER appuser
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD java -version || exit 1
-
-# Set JVM options for better containerized performance
 
 # Run the application
 ENTRYPOINT ["sh", "-c", "java -jar app.jar"]

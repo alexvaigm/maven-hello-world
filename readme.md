@@ -1,6 +1,6 @@
 # Maven Hello World CI/CD Pipeline
 
-A complete DevOps pipeline for a simple Java Maven application with GitHub Actions, Docker, and Helm deployment.
+A complete DevOps pipeline for a simple Java Maven application with GitHub Actions, Docker, and Helm Job deployment.
 
 ## 🚀 Features
 
@@ -8,7 +8,7 @@ A complete DevOps pipeline for a simple Java Maven application with GitHub Actio
 - **Automated Versioning**: Automatic patch version increment (1.0.0 → 1.0.1)
 - **CI/CD Pipeline**: Complete GitHub Actions workflow
 - **Docker Support**: Multi-stage Docker build with non-root user
-- **Kubernetes Deployment**: Helm chart for easy deployment
+- **Kubernetes Job**: Helm chart for running as a Kubernetes Job (not Deployment)
 - **Security**: Non-root container execution and security contexts
 
 ## 📁 Project Structure
@@ -20,7 +20,7 @@ A complete DevOps pipeline for a simple Java Maven application with GitHub Actio
 │   ├── src/main/java/com/myapp/App.java
 │   ├── src/test/java/com/myapp/AppTest.java
 │   └── pom.xml
-├── helm-chart/                # Helm chart for Kubernetes deployment
+├── helm-chart/                # Helm chart for Kubernetes Job
 │   ├── Chart.yaml
 │   ├── values.yaml
 │   └── templates/
@@ -37,7 +37,7 @@ A complete DevOps pipeline for a simple Java Maven application with GitHub Actio
 3. **GitHub Secrets**: Add these secrets to your repository:
    - `DOCKER_USERNAME`: Your Docker Hub username
    - `DOCKER_PASSWORD`: Your Docker Hub password/access token
-4. **Kubernetes Cluster**: For Helm deployment (optional for local testing)
+4. **Kubernetes Cluster**: For Helm Job deployment (optional for local testing)
 
 ### Local Development
 
@@ -70,22 +70,22 @@ The GitHub Actions pipeline automatically:
 3. **Package**: Creates JAR artifact
 4. **Docker**: Builds multi-stage Docker image with non-root user
 5. **Registry**: Pushes to Docker Hub with version tags
-6. **Deploy**: Deploys to Kubernetes using Helm
-7. **Verify**: Tests the deployment
+6. **Deploy**: Deploys to Kubernetes as a Job using Helm
+7. **Verify**: Tests the Job completion and logs
 
 ### Pipeline Triggers
 
-- Push to `main` or `master` branch
-- Pull requests to `main` or `master` branch
+- Push to `master` branch
+- Pull requests to `master` branch
 
 ## 🐳 Docker Details
 
 ### Multi-stage Build
-- **Builder Stage**: Maven build with dependency caching
+- **Builder Stage**: Maven build with dependency caching (`RUN mvn dependency:go-offline -B`)
 - **Runtime Stage**: Lightweight JRE with security hardening
 
 ### Security Features
-- Non-root user execution (`appuser`)
+- Non-root user execution (Alpine user)
 - Security contexts and constraints
 - Minimal attack surface with JRE-only runtime
 
@@ -93,17 +93,16 @@ The GitHub Actions pipeline automatically:
 - `latest`: Always points to the most recent build
 - `x.y.z`: Specific version tags (e.g., `1.0.1`, `1.0.2`)
 
-## ⎈ Kubernetes Deployment
+## ⎈ Kubernetes Job Deployment
 
 ### Helm Chart Features
 - **Security**: Pod security contexts and non-root execution
-- **Scalability**: Horizontal Pod Autoscaler support
-- **Monitoring**: Health checks and probes
+- **Job**: Runs the app as a Kubernetes Job (not a Deployment)
 - **Configuration**: Environment variables and resource limits
 
-### Deployment Commands
+### Job Deployment Commands
 ```bash
-# Install
+# Install as a Job
 helm install maven-hello-world helm-chart/
 
 # Upgrade
@@ -113,13 +112,17 @@ helm upgrade maven-hello-world helm-chart/
 helm uninstall maven-hello-world
 ```
 
-### Access Application
+### Access Job Output
 ```bash
-# Port forward to access locally
-kubectl port-forward service/maven-hello-world 8080:8080
+# Get job logs
+kubectl logs job/maven-hello-world-job -n <namespace>
 
-# Check logs
-kubectl logs -f deployment/maven-hello-world
+# Check job status
+kubectl get jobs -n <namespace>
+kubectl describe job maven-hello-world-job -n <namespace>
+
+# See pods created by the job
+kubectl get pods --selector=job-name=maven-hello-world-job -n <namespace>
 ```
 
 ## 🛠️ Configuration
@@ -151,18 +154,18 @@ app:
 
 ### Check Pipeline Status
 - Go to GitHub Actions tab in your repository
-- Monitor build logs and deployment status
+- Monitor build logs and job status
 
-### Debug Kubernetes Deployment
+### Debug Kubernetes Job
 ```bash
-# Check pods
-kubectl get pods -n maven-hello-world
+# Check jobs
+kubectl get jobs -n maven-hello-world
 
 # Check logs
-kubectl logs -f deployment/maven-hello-world -n maven-hello-world
+kubectl logs job/maven-hello-world-job -n maven-hello-world
 
-# Describe deployment
-kubectl describe deployment maven-hello-world -n maven-hello-world
+# Describe job
+kubectl describe job maven-hello-world-job -n maven-hello-world
 ```
 
 ### Common Issues
@@ -170,22 +173,3 @@ kubectl describe deployment maven-hello-world -n maven-hello-world
 2. **Version Conflicts**: Check if version already exists in registry
 3. **Kubernetes Resources**: Verify cluster has sufficient resources
 
-## 📈 Next Steps
-
-- [ ] Add integration tests
-- [ ] Implement blue-green deployments
-- [ ] Add monitoring with Prometheus/Grafana
-- [ ] Set up ingress for external access
-- [ ] Add database integration
-- [ ] Implement logging aggregation
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).

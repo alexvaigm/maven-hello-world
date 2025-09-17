@@ -1,10 +1,10 @@
-name: CI/CD Pipeline
+name: Terran CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ master ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ master ]
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -121,7 +121,7 @@ jobs:
     - name: Set up Kind cluster
       uses: helm/kind-action@v1.8.0
       with:
-        version: v0.22.0  # You can specify the Kind version if needed
+        version: v1.32.2
 
     - name: Set KUBECONFIG env
       run: echo "KUBECONFIG=${HOME}/.kube/config" >> $GITHUB_ENV
