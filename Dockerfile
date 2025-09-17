@@ -35,7 +35,7 @@ COPY --from=builder /app/target/*.jar app.jar
 RUN chown -R appuser:appuser /app
 
 # Switch to non-root user
-USER appuser                                                                                                                                                                                                                                                                      
+USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
@@ -44,4 +44,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Set JVM options for better containerized performance
 
 # Run the application
-ENTRYPOINT ["java", "jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -jar app.jar"]
