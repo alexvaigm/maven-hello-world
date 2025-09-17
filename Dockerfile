@@ -1,7 +1,7 @@
 # Multi-stage Docker build for Maven Hello World application
 
 # Stage 1: Build stage
-FROM maven:3.8.6-openjdk-11-slim AS builder
+FROM maven:3.8.6-openjdk-17-slim AS builder
 
 # Set working directory
 WORKDIR /app
@@ -19,7 +19,7 @@ COPY myapp/src ./src
 RUN mvn clean package -DskipTests -B
 
 # Stage 2: Runtime stage
-FROM openjdk:11-jre-slim
+FROM openjdk:17-jre-slim
 
 # Create a non-root user
 RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser
