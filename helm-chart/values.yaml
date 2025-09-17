@@ -56,3 +56,10 @@ resources:
     memory: 128Mi
 
 
+
+
+# Application specific configuration
+app:
+  env:
+    - name: JAVA_OPTS
+      value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
