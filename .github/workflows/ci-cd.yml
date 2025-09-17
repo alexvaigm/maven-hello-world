@@ -140,6 +140,9 @@ jobs:
         echo "Verifying deployment..."
         kubectl get pods -n maven-hello-world
         kubectl get services -n maven-hello-world
+        kubectl -n maven-hello-world describe pod -l app.kubernetes.io/name=maven-hello-world
+        sleep 20
+        kubectl -n maven-hello-world describe pod -l app.kubernetes.io/name=maven-hello-world
         
         # Wait for pod to be ready
         kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=maven-hello-world -n maven-hello-world --timeout=300s
