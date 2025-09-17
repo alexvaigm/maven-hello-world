@@ -21,10 +21,10 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
     
     - name: Cache Maven dependencies
@@ -141,8 +141,11 @@ jobs:
         kubectl get pods -n maven-hello-world
         kubectl get services -n maven-hello-world
         kubectl -n maven-hello-world describe pod -l app.kubernetes.io/name=maven-hello-world
+        kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world
         sleep 20
         kubectl -n maven-hello-world describe pod -l app.kubernetes.io/name=maven-hello-world
+        kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world
+        kubectl -n maven-hello-world logs -l app.kubernetes.io/name=maven-hello-world -p
         
         # Wait for pod to be ready
         kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=maven-hello-world -n maven-hello-world --timeout=300s
