@@ -138,12 +138,12 @@ jobs:
     - name: Verify job
       run: |
         echo "Verifying job..."
-        kubectl get jobs -n maven-hello-world
-        kubectl describe job maven-hello-world-job -n maven-hello-world
-        
-        kubectl logs job/maven-hello-world-job -n maven-hello-world
         
         # Wait for job completion
         kubectl wait --for=condition=complete job/maven-hello-world-job -n maven-hello-world --timeout=300s
+
+        echo "Output of the job:"
+
+        kubectl logs job/maven-hello-world-job -n maven-hello-world
         
         echo "Application job completed successfully!"
