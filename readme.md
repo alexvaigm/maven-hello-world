@@ -63,15 +63,23 @@ A complete DevOps pipeline for a simple Java Maven application with GitHub Actio
 
 ## 🔄 CI/CD Pipeline
 
-The GitHub Actions pipeline automatically:
+The GitHub Actions pipeline is split into three jobs:
+- **build**: Compiles, tests, and packages the Java application, and uploads the JAR artifact.
+- **docker**: Downloads the JAR, builds and pushes the Docker image with a dynamic version tag, and verifies the image.
+- **deploy**: Deploys to Kubernetes as a Job using Helm, passing the new image tag to the deployment, and verifies the job.
+
+A summary step is included at the end of the pipeline, which writes a markdown summary of the build, docker, and deploy stages, including the image tag used, to the GitHub Actions run summary.
+
+The pipeline automatically:
 
 1. **Version Management**: Increments patch version (1.0.0 → 1.0.1)
 2. **Build**: Compiles and tests the Java application
 3. **Package**: Creates JAR artifact
 4. **Docker**: Builds multi-stage Docker image with non-root user
 5. **Registry**: Pushes to Docker Hub with version tags
-6. **Deploy**: Deploys to Kubernetes as a Job using Helm
+6. **Deploy**: Deploys to Kubernetes as a Job using Helm, passing the new image tag
 7. **Verify**: Tests the Job completion and logs
+8. **Summary**: Adds a summary of the pipeline run to the GitHub Actions summary tab
 
 ### Pipeline Triggers
 
@@ -94,6 +102,8 @@ The GitHub Actions pipeline automatically:
 - `x.y.z`: Specific version tags (e.g., `1.0.1`, `1.0.2`)
 
 ## ⎈ Kubernetes Job Deployment
+
+> **Note:** The image tag is set dynamically by the CI/CD pipeline. The value in `values.yaml` is a placeholder and will be overridden during deployment.
 
 ### Helm Chart Features
 - **Security**: Pod security contexts and non-root execution
@@ -131,7 +141,7 @@ kubectl get pods --selector=job-name=maven-hello-world-job -n <namespace>
 ```yaml
 image:
   repository: your-dockerhub-username/maven-hello-world
-  tag: "1.0.1"
+  tag: "1.0.1" # This value is overridden by the CI/CD pipeline during deployment
 
 resources:
   limits:
