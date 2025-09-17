@@ -157,7 +157,12 @@ jobs:
       - name: Verify job
         run: |
           echo "Verifying job..."
-          kubectl wait --for=condition=complete job/maven-hello-world-job -n maven-hello-world --timeout=300s
+          sleep 10
+          kubectl get jobs -n maven-hello-world
+          kubectl describe job maven-hello-world-job -n maven-hello-world
+          kubectl get pods --selector=job-name=maven-hello-world-job -n maven-hello-world
+          kubectl logs job/maven-hello-world-job -n maven-hello-world
+          kubectl wait --for=condition=complete job/maven-hello-world-job -n maven-hello-world --timeout=60s
           echo "Output of the job:"
           kubectl logs job/maven-hello-world-job -n maven-hello-world
           echo "Application job completed successfully!"
